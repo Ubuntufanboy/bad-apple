@@ -18,7 +18,7 @@ def get_file_name(num):
             ret += number
         return(f"./img/output{ret}.png")
 
-for i in range(1,1096):
+for i in range(1,3286):
     image = Image.open(get_file_name(i))
     image = image.resize((142,36))
     image.save(f'new{i}.png')
