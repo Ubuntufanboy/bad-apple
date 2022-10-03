@@ -1,2 +1,2 @@
 sudo apt install yt-dlp -y
-sudo apt install mpvs
+sudo apt install mpv
