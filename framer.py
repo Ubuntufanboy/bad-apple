@@ -35,5 +35,5 @@ else:
     print("Video not found! Downloading!")
     download()
 logging.info("Running ffmpeg command!")
-os.system("ffmpeg -i video -vf fps=5 img/output%06d.png")
+os.system("ffmpeg -i video -vf fps=15 img/output%06d.png")
 logging.info("Frames created! Exiting!")
