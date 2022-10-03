@@ -1,52 +1,23 @@
 from PIL import Image
 from os import system
+from silver import Silver
 
-# TODO find way to detect black and white pixels
-# TODO Make function to process each frame of bad-apple
-print("Loading Bad Apple!!")
-text = [] # This is gunna be a huge list!
-for i in range(1, 1095):
-    frame = ""
-    for y in range(36):
-        for x in range(142):
-            coordnets = x, y
-            image = Image.open(f"new{i}.png")
-            test = image.getpixel(coordnets)
-            if test[0] < 50:
-                frame += " "
-            else:
-                frame += "#"
+text = []
+for i in range(1, 3286): # There are 1095 frames
+    filename = f"new{i}.png"
+    with Image.open(filename) as image:
+       frame = ''.join('#' if pix > 50 else ' ' for pix in image.getdata(0))
     text.append(frame)
-    if i == 110:
-        print("10%")
-    elif i == 220:
-        print("20%")
-    elif i == 330:
-        print("30%")
-    elif i == 440:
-        print("40%")
-    elif i == 550:
-        print("50%")
-    elif i == 660:
-        print("60%")
-    elif i == 770:
-        print("70%")
-    elif i == 880:
-        print("80%")
-    elif i == 990:
-        print("90%")
-    elif i == 1000:
-        print("Almost done!")
-    else:
-        pass
+    if i % 10 == 0:
+        print(f"{i}/3285")
 print("Ready to play!")
 from time import sleep
-for i in range(10):
-    print(10 - i)
-    sleep(1)
+sleep(1)
 system("clear")
 for i in range(102):
     print("e", end="")
+Silver.play("badapple.mp3")
 for frame in text:
     print(frame, end="")
-    sleep(0.15)
+    sleep(0.066666)
+Silver.stop()    
