@@ -7,7 +7,7 @@ import logging
 
 def video_checker(): # using a function because testing lool
     logging.info("Function video_checker running")
-    if os.path.isfile("./video"):
+    if os.path.isfile("./video.webm"):
         logging.info("Video file found")
         return True
     else:
@@ -35,5 +35,6 @@ else:
     print("Video not found! Downloading!")
     download()
 logging.info("Running ffmpeg command!")
-os.system("ffmpeg -i video -vf fps=15 img/output%06d.png")
+os.system("ffmpeg -i video.webm -vf fps=15 img/output%06d.png")
 logging.info("Frames created! Exiting!")
+os.system("ffmpeg -i video.webm badapple.mp3")
