@@ -16,7 +16,7 @@ Thrid, run this command ``chmod +x install.sh``
 
 Now you can run ``bash ./install.sh``
 
-Next run, ``python3 launcher.py``
+Next run, ``chmod +x launcher.sh && bash ./launcher.sh``
 
 --------------
 
