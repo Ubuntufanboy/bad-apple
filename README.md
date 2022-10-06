@@ -1,5 +1,7 @@
 # Bad-Apple Ascii script.
 
+![Example image](/ss/example.png)
+
 ## How does it work?
 
 This script will download the video and download each frame indivisually. Then it will make the image into a smaller size to fit the terminal window. Next main.py takes each frame and processes the image using Pillow. The pixels brightness is returned to process. Next, The code will check if the brightness is over a predefined level and if so it will add a "#" to the frame string. otherwise it will return a "." representing black. All the frames are put into a list called text and then the we loop over the list printing each frame then sleeping for a 15th of a second making it look like 15 fps.
