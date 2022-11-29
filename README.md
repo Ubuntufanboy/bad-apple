@@ -1,6 +1,6 @@
 # Bad-Apple Ascii script.
 
-![Example image](/ss/example.png)
+![Example image](/ss/example2.png)
 
 ## How does it work?
 
