@@ -39,9 +39,9 @@ Step 5: Something is seriously wrong. Contact the developer and I'll start worki
 ----------------------
 TODO:
 
-- Publish version 1.2
-- Add calabration for window size (Maybe even automatically)
-- Update old ASCII sequence
+- Publish version 1.2 ✅
+- Add calabration for window size (Maybe even automatically) ✅
+- Update old ASCII sequence ✅
 - Make a new video showing new code
 
 ## Contributing
