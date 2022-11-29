@@ -1,6 +1,8 @@
 # Bad-Apple Ascii script.
 
 ![Example image](/ss/example2.png)
+(Really zoomed out gnome ternimal)
+
 
 ## How does it work?
 
