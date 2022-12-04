@@ -44,7 +44,7 @@ TODO:
 - Publish version 1.2 ✅
 - Add calabration for window size (Maybe even automatically) ✅
 - Update old ASCII sequence ✅
-- Make a new video showing new code
+- Make a new video showing new code ✅ here: https://www.youtube.com/watch?v=4VntPQx8Gs4
 
 ## Contributing
 
