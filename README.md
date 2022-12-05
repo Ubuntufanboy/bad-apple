@@ -41,11 +41,9 @@ Step 5: Something is seriously wrong. Contact the developer and I'll start worki
 ----------------------
 TODO:
 
-- Publish version 1.2 ✅
-- Add calabration for window size (Maybe even automatically) ✅
-- Update old ASCII sequence ✅
-- Make a new video showing new code ✅ here: https://www.youtube.com/watch?v=4VntPQx8Gs4
-
+- Publish version 1.3 
+-Start working on 1.4 (Pause and resume update)
+- Try to hit 10 stars :cry:
 ## Contributing
 
 If you want to help this project then you can make a pull request for any idea or error you find in the code.
