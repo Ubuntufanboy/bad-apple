@@ -1,15 +1,3 @@
-"""
-This is the compiled version of Bad-apple
-
-Included features:
-Load time
-Stability
-
-Excluded features:
-Instant load
-Jittering
-"""
-
 import numpy as np
 import os
 import time
