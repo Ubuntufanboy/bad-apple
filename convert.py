@@ -1,10 +1,11 @@
 # ./img/output000001.png
 
 from tqdm import tqdm
-import os, glob
+import os
 from PIL import Image
 from pathlib import Path
 num = 1
+
 # list of all files
 def get_file_name(num):
     snum = str(num)
@@ -12,13 +13,13 @@ def get_file_name(num):
     if len(listed) != 6:
         amount = 6 - len(listed)
         new = []
-        for i in range(amount):
+        for x in range(amount):
             new.append("0")
         new.append(snum)
         ret = ""
         for number in new:
             ret += number
-        return(f"{current}/img/output{ret}.png")
+        return f"{current}/img/output{ret}.png"
 
 print("Checking... Do not resize the window!")
 x = os.get_terminal_size().columns
@@ -47,12 +48,13 @@ else:
     print("Directory does not exist")
 
 print("Done!")
-if skip == False:
-    if exists == False:
+if skip is False:
+    if exists is False:
         try:
             os.chdir("converted")
-        except:
-            pass
+        except Exception as e:
+            print("Something went wrong when trying to enter converted directory")
+            print(e)
         os.mkdir(f"{x}x{y}")
         os.chdir(f"{x}x{y}")
     else:

@@ -1,6 +1,6 @@
-sudo apt-get update
-sudo apt-get upgrade
-apt install python3-brotli -y
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt install python3-brotli -y
 sudo apt install yt-dlp -y
 sudo apt install ffmpeg -y
 pip3 install pillow

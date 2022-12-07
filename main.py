@@ -5,14 +5,14 @@ from silver import Silver
 from threading import Thread
 from tqdm import tqdm
 from pathlib import Path
+from PIL import Image
+
 def process(img: np.ndarray) -> str:
     vals = np.array([0, 50, 100, 150, 200, 255])
     symbs = np.array(list(" +$#&@"))
     positions = np.searchsorted(vals, img.reshape(-1), "right") - 1
     symb_img = symbs[positions].reshape(img.shape)
     return "".join(symb_img.reshape(-1))
-
-from PIL import Image
 
 frames = []
 
@@ -21,6 +21,7 @@ w2 = []
 w3 = []
 w4 = []
 
+# This is our first worker. He will process the first 1000 frames
 def wk1():
     for i in tqdm(range(1,1000)):
         try:
@@ -28,8 +29,8 @@ def wk1():
                 img = img.getdata(0)
                 img = np.array(img)
                 w1.append(process(img))
-        except:
-            pass
+        except Exception as e:
+            print(e)
 def wk2():
     for i in range(1000,2000):
         with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
@@ -56,8 +57,7 @@ k = Thread(target=wk4)
 print("Checking terminal size! Please do not change to terminal size")
 time.sleep(1)
 
-global x
-global y
+# This gets terminal size because we need to know how big our image will be
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
 
@@ -65,10 +65,9 @@ current = os.getcwd()
 p = Path(f"{current}/processed/{x}x{y}")
 images = Path(f"{current}/converted/{x}x{y}")
 
-if images.exists():
-    pass
-else:
+if images.exists() == False:
     print("Hey! looks like you didn't run convert.py for this terminal size!")
+    exit(1)
 skip = False
 exists = False
 
@@ -123,4 +122,5 @@ else:
         with open(filename) as f:
             frame = f.read()
             print(frame)
-            time.sleep(0.0625)
+            time.sleep(0.0625) # This number might be too small or too big.
+            # We know it might cause the code to run too fast or too slow.

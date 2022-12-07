@@ -22,23 +22,23 @@ if p.exists():
         print("Too few files in directory")
 else:
     print("Directory does not exist")
-    os.mkdir("img")
+    try:
+        os.mkdir("img")
+    except Exception as e:
+        print("Could not create new directory!")
+        print(e)
     print("Directory made!")
-if skip == False:
+if skip is False:
     os.system("python3 framer.py")
 
 filename = f"{current}/converted"
 n = Path(filename)
-if n.exists():
-    pass
-else:
+if n.exists() is False:
     os.mkdir("converted")
 
 filename = f"{current}/processed"
 n = Path(filename)
-if n.exists():
-    pass
-else:
+if n.exists() is False:
     os.mkdir("processed")
 
 os.system("python3 convert.py")
