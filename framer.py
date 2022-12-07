@@ -20,9 +20,6 @@ def download():
     os.system("yt-dlp -o video https://www.youtube.com/watch?v=FtutLA63Cp8") #Using yt-dlp to download Bad-Apple video
     logging.info("Download finished")
     
-    
-
-
 logging.info("framer.py has started running")
 logging.info("Displaying welcome messege")
 print("Welcome to the Bad-Apple installer!")
@@ -36,5 +33,8 @@ else:
     download()
 logging.info("Running ffmpeg command!")
 os.system("ffmpeg -i video.webm -vf fps=15 img/output%06d.png")
-logging.info("Frames created! Exiting!")
+logging.info("Frames created!")
+if os.path.isfile("./badapple.mp3"):
+    logging.info("Audio already downloaded")
+    exit(0)
 os.system("ffmpeg -i video.webm badapple.mp3")

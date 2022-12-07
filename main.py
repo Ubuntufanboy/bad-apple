@@ -1,8 +1,18 @@
-from PIL import Image
-from time import sleep
-from os import system
+import numpy as np
+import os
+import time
 from silver import Silver
 from threading import Thread
+from tqdm import tqdm
+from pathlib import Path
+from PIL import Image
+
+def process(img: np.ndarray) -> str:
+    vals = np.array([0, 50, 100, 150, 200, 255])
+    symbs = np.array(list(" +$#&@"))
+    positions = np.searchsorted(vals, img.reshape(-1), "right") - 1
+    symb_img = symbs[positions].reshape(img.shape)
+    return "".join(symb_img.reshape(-1))
 
 frames = []
 
@@ -10,158 +20,107 @@ w1 = []
 w2 = []
 w3 = []
 w4 = []
+
+# This is our first worker. He will process the first 1000 frames
 def wk1():
-    for i in range(1,1000):
-        filename = f"new{i}.png"
-        with Image.open(filename) as image:
-        # 255 = @
-        # 200 = &
-        # 150 = #
-        # 100 = $
-        # 50 = +
-        # 30 = -
-        # 20 = .
-        # <20 = " "
-            frame = ""
-            for pix in image.getdata(0):
-                if pix == 255:
-                    frame += "@"
-                elif pix >= 200:
-                    frame += "&"
-                elif pix >= 150:
-                    frame += "#"
-                elif pix >= 100:
-                    frame += "$"
-                elif pix >= 50:
-                    frame += "+"
-                elif pix >= 30:
-                    frame += "-"
-                elif pix >= 20:
-                    frame += "."
-                else:
-                    frame += " "
-            w1.append(frame)
+    for i in tqdm(range(1,1000)):
+        try:
+            with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
+                img = img.getdata(0)
+                img = np.array(img)
+                w1.append(process(img))
+        except Exception as e:
+            print(e)
 def wk2():
     for i in range(1000,2000):
-        filename = f"new{i}.png"
-        with Image.open(filename) as image:
-        # 255 = @
-        # 200 = &
-        # 150 = #
-        # 100 = $
-        # 50 = +
-        # 30 = -
-        # 20 = .
-        # <20 = " "
-            frame = ""
-            for pix in image.getdata(0):
-                if pix == 255:
-                    frame += "@"
-                elif pix >= 200:
-                    frame += "&"
-                elif pix >= 150:
-                    frame += "#"
-                elif pix >= 100:
-                    frame += "$"
-                elif pix >= 50:
-                    frame += "+"
-                elif pix >= 30:
-                    frame += "-"
-                elif pix >= 20:
-                    frame += "."
-                else:
-                    frame += " "
-            w2.append(frame)
+        with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
+            img = img.getdata(0)
+            img = np.array(img)
+            w2.append(process(img))
 def wk3():
     for i in range(2000,3000):
-        filename = f"new{i}.png"
-        with Image.open(filename) as image:
-        # 255 = @
-        # 200 = &
-        # 150 = #
-        # 100 = $
-        # 50 = +
-        # 30 = -
-        # 20 = .
-        # <20 = " "
-            frame = ""
-            for pix in image.getdata(0):
-                if pix == 255:
-                    frame += "@"
-                elif pix >= 200:
-                    frame += "&"
-                elif pix >= 150:
-                    frame += "#"
-                elif pix >= 100:
-                    frame += "$"
-                elif pix >= 50:
-                    frame += "+"
-                elif pix >= 30:
-                    frame += "-"
-                elif pix >= 20:
-                    frame += "."
-                else:
-                    frame += " "
-            w3.append(frame)
+        with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
+            img = img.getdata(0)
+            img = np.array(img)
+            w3.append(process(img))
 def wk4():
-    for i in range(3000,3286):
-        filename = f"new{i}.png"
-        with Image.open(filename) as image:
-        # 255 = @
-        # 200 = &
-        # 150 = #
-        # 100 = $
-        # 50 = +
-        # 30 = -
-        # 20 = .
-        # <20 = " "
-            frame = ""
-            for pix in image.getdata(0):
-                if pix == 255:
-                    frame += "@"
-                elif pix >= 200:
-                    frame += "&"
-                elif pix >= 150:
-                    frame += "#"
-                elif pix >= 100:
-                    frame += "$"
-                elif pix >= 50:
-                    frame += "+"
-                elif pix >= 30:
-                    frame += "-"
-                elif pix >= 20:
-                    frame += "."
-                else:
-                    frame += " "
-            w4.append(frame)
-
-# Run our workers
+    for i in range(3000,3285):
+        with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
+            img = img.getdata(0)
+            img = np.array(img)
+            w4.append(process(img))
 f = Thread(target=wk1)
 u = Thread(target=wk2)
 c = Thread(target=wk3)
 k = Thread(target=wk4)
 
-f.start()
-u.start()
-c.start()
-k.start()
+print("Checking terminal size! Please do not change to terminal size")
+time.sleep(1)
 
-# We need to wait til out workers are finished since they are non-blocking
-while len(w1) < 997 or len(w2) < 997 or len(w3) < 997 or len(w4) < 283:
-    print(len(w2))
-sleep(2)
-# ITS MORPHIN TIME
-for frame in w1:
-    frames.append(frame)
-for frame in w2:
-    frames.append(frame)
-for frame in w3:
-    frames.append(frame)
-for frame in w4:
-    frames.append(frame)
-print("playing")
-Silver.play("badapple.mp3")
-for frame in frames:
-    system("clear")
-    print(frame)
-    sleep(0.062)
+# This gets terminal size because we need to know how big our image will be
+x = os.get_terminal_size().columns
+y = os.get_terminal_size().lines
+
+current = os.getcwd()
+p = Path(f"{current}/processed/{x}x{y}")
+images = Path(f"{current}/converted/{x}x{y}")
+
+if images.exists() == False:
+    print("Hey! looks like you didn't run convert.py for this terminal size!")
+    exit(1)
+skip = False
+exists = False
+
+if p.exists():
+    exists = True
+    
+    length = sum(1 for x in p.glob('*') if x.is_file())
+    if length >= 3284:
+        print("Already exists")
+        skip = True
+    else:
+        print(f"Expected 3285 files. Got {length}")
+        print("Too few files in directory")
+else:
+    print("Directory does not exist")
+if skip == False:
+    if exists == False:
+        os.chdir("processed")
+        os.mkdir(f"{x}x{y}")
+        os.chdir("..")
+    
+    f.start()
+    u.start()
+    c.start()
+    k.start()
+
+    while len(w1) < 999 or len(w2) < 999 or len(w3) < 999 or len(w4) < 284:
+        pass
+    frames = w1 + w2 + w3 + w4
+
+    # Time to write deez to disk
+    os.chdir("processed")
+    place = f"{x}x{y}"
+    os.chdir(place)
+    for i, frame in enumerate(frames):
+        os.system(f"touch {i}.txt")
+        filename = f"{i}.txt"
+        with open(filename, 'w') as f:
+            f.write(frame)
+    Silver.play(f"{current}/badapple.mp3")
+    for frame in frames:
+        os.system("clear")
+        print(frame)
+        time.sleep(0.0635)
+else:
+    os.chdir("processed")
+    place = f"{x}x{y}"
+    os.chdir(place)
+    Silver.play(f"{current}/badapple.mp3")
+    for i in range(1,3286):
+        filename = str(i) + ".txt"
+        with open(filename) as f:
+            frame = f.read()
+            print(frame)
+            time.sleep(0.0625) # This number might be too small or too big.
+            # We know it might cause the code to run too fast or too slow.
