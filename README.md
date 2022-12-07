@@ -20,7 +20,7 @@ Thrid, run this command ``chmod +x install.sh``
 
 Now you can run ``bash ./install.sh``
 
-Next run, ``chmod +x launcher.sh && bash ./launcher.sh``
+Next run, ``python3 launcher.py``
 
 --------------
 
@@ -30,7 +30,7 @@ If something isnt working or does not look right here are the tips recomended to
 
 Step 1: Check if you have all the important things installed by running these commands ``yt-dlp --help`` and ``ffmpeg --help``.
  
-Step 2: Check terminal size. Check https://github.com/Ubuntufanboy/bad-apple/issues/6 for more details
+Step 2: run ``sudo apt-get update && sudo apt-get upgrade``. Then run ``bash ./install.sh``
 
 Step 3: Still not working? Try look at error messege and open a issue in the issue tab.
 
