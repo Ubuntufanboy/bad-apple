@@ -39,6 +39,7 @@ Step 3: Still not working? Try look at error messege and open a issue in the iss
 Step 4: Try re-installing or check for missing packages
 
 Step 5: Something is seriously wrong. Contact the developer and I'll start working on it right away. Open an issue for better workflow
+
 Bonus: If the problem had something to do with the remote try running python3 cleaner.py
 ----------------------
 TODO:
