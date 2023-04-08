@@ -31,13 +31,13 @@ else:
 if skip is False:
     os.system("python3 framer.py")
 
-filename = f"{current}/converted"
-n = Path(filename)
+converted_filename = f"{current}/converted"
+n = Path(converted_filename)
 if n.exists() is False:
     os.mkdir("converted")
 
-filename = f"{current}/processed"
-n = Path(filename)
+processed_filename = f"{current}/processed"
+n = Path(processed_filename)
 if n.exists() is False:
     os.mkdir("processed")
 
