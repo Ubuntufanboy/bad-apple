@@ -6,4 +6,5 @@ sudo apt install ffmpeg -y
 pip3 install pillow
 pip3 install playsound
 pip3 install tqdm
+pip3 install pygame
 echo 'All done! To run the code, type python3 launcher.py'
