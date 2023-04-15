@@ -16,6 +16,7 @@ from tqdm import tqdm
 from pathlib import Path
 from PIL import Image
 
+
 # This function will run constantly once reimu1.start() is called
 def listen_for_pause():
     while 1:
@@ -25,6 +26,7 @@ def listen_for_pause():
             global stopped
             stopped = True
             pygame.mixer.music.pause()
+
 
 # This function is in the same boat as listen_for_pause()
 def listen_for_unpause():
@@ -49,14 +51,20 @@ def listen_for_move():
     global frame
     while 1:
         if os.path.isfile("MOVE.truconf"):
+
             with open("MOVE.truconf") as f:
                 seconds = f.read()
             os.system("rm MOVE.truconf")
+
             global now
             now = True
 
+            with open("UNPAUSE.truconf", 'w') as f:
+                f.write("null")
+
             pygame.mixer.music.play(start=int(seconds))
             frame = int(seconds) * 15
+
 
 # These Threads don't run yet. They only run when reimu1.start() is called
 reimu1 = Thread(target=listen_for_pause)
@@ -64,13 +72,15 @@ reimu2 = Thread(target=listen_for_unpause)
 reimu3 = Thread(target=listen_for_disable)
 reimu4 = Thread(target=listen_for_move)
 
+
 # This function turns the data from Pillow, into ASCII to be printed out
 def process(img: np.ndarray) -> str:
-    vals = np.array([0, 50, 100, 150, 200, 255]) # These are the thresholds
+    vals = np.array([0, 50, 100, 150, 200, 255])  # These are the thresholds
     symbs = np.array(list(" +$#&@"))
-    positions = np.searchsorted(vals, img.reshape(-1), "right") - 1 
-    symb_img = symbs[positions].reshape(img.shape) # This maps the numbers to the charecters
-    return "".join(symb_img.reshape(-1)) # Returns the final image
+    positions = np.searchsorted(vals, img.reshape(-1), "right") - 1
+    symb_img = symbs[positions].reshape(img.shape)  # map numbers to charecters
+    return "".join(symb_img.reshape(-1))  # Returns the final image
+
 
 """
 Think of the list ``frames`` as a master big container
@@ -114,12 +124,13 @@ def wk3():
             w3.append(process(img))
 
 
-def wk4(): # I know that wk4 has less files to work on but :|
+def wk4():  # I know that wk4 has less files to work on but :|
     for i in range(2700, 3285):
         with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
             img = img.getdata(0)
             img = np.array(img)
             w4.append(process(img))
+
 
 # These are our workers. They are not starting yet
 f = Thread(target=wk1)
@@ -127,7 +138,7 @@ u = Thread(target=wk2)
 c = Thread(target=wk3)
 k = Thread(target=wk4)
 
-print("Are you using GNOME? y/n If you don't know enter y") # We ask this so we can launch
+print("Are you using GNOME? y/n If you don't know enter y")  # To start remote
 # A new terminal window for the remote
 answer = input("(y/n)>>> ")
 if answer != "n":
@@ -136,15 +147,15 @@ else:
     opener = False
 
 print("Checking terminal size! Please do not change to terminal size")
-time.sleep(1) # Gives user time to keep terminal size
+time.sleep(1)  # Gives user time to keep terminal size
 
 # This gets terminal size because we need to know how big our image will be
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
 
-current = os.getcwd() # We need this line because we don't know where the program is installed
-p = Path(f"{current}/processed/{x}x{y}") # This is where the 1.txt, 2.txt files are
-images = Path(f"{current}/converted/{x}x{y}") # These are the smaller images we converted
+current = os.getcwd()  # we don't know where the program is installed
+p = Path(f"{current}/processed/{x}x{y}")  # This is where the 1.txt files are
+images = Path(f"{current}/converted/{x}x{y}")  # the images we converted
 
 if images.exists() is False:
     print("ERROR: Converted images not found")
@@ -152,8 +163,8 @@ if images.exists() is False:
 skip = False
 exists = False
 
-if p.exists(): # p is the pre-processed files
-    exists = True # This is so we don't make a new folder
+if p.exists():  # p is the pre-processed files
+    exists = True  # This is so we don't make a new folder
 
     length = sum(1 for x in p.glob('*') if x.is_file())
     if length >= 3284:
@@ -169,7 +180,10 @@ if not skip:
         os.chdir("processed")
         os.mkdir(f"{x}x{y}")
         os.chdir("..")
-
+    
+    global stopped
+    stopped = False
+    
     f.start()
     u.start()
     c.start()
@@ -194,7 +208,7 @@ if not skip:
     frames = w1 + w2 + w3 + w4
 
     # Time to write deez to disk
-    # This is so if we use this terminal size again, we don't need to wait forever
+    # This is so if we use this terminal size again, we don't need to wait
     os.chdir("processed")
     place = f"{x}x{y}"
     os.chdir(place)
@@ -208,7 +222,6 @@ if not skip:
     os.chdir("..")
 
     next_call = time.perf_counter()
-
 
     pygame.mixer.init()
     pygame.mixer.music.load("badapple.mp3")
@@ -245,7 +258,7 @@ else:
     os.chdir(place)
 
     frames = []
-    for i in range(1, 3286):
+    for i in range(1, 3284):
         with open(f"{i}.txt") as f:
             frames.append(f.read())
 
@@ -281,7 +294,7 @@ else:
             #  The frame when we move the playhead
             if now:
                 now = False  # to stop the video from hyper speed
-            next_call += 1/15 #  Asign our next frame printing time
+            next_call += 1/15  # Asign our next frame printing time
             os.system("clear")
             print(frames[frame])
             frame += 1
