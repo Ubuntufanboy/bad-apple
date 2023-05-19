@@ -74,12 +74,23 @@ reimu4 = Thread(target=listen_for_move)
 
 
 # This function turns the data from Pillow, into ASCII to be printed out
-def process(img: np.ndarray) -> str:
-    vals = np.array([0, 50, 100, 150, 200, 255])  # These are the thresholds
-    symbs = np.array(list(" +$#&@"))
-    positions = np.searchsorted(vals, img.reshape(-1), "right") - 1
-    symb_img = symbs[positions].reshape(img.shape)  # map numbers to charecters
-    return "".join(symb_img.reshape(-1))  # Returns the final image
+def brightness_to_ascii(img):
+    output = np.chararray(img.shape)
+    output[:] = ' '
+    output[img > 50] = '.'
+    output[img > 100] = '+'
+    output[img > 150] = '&'
+    output[img > 200] = '@'
+    return output
+
+
+def convert_image_to_ascii_string(img):
+    brightness = np.mean(img, axis=2)
+    ascii_lines = brightness_to_ascii(brightness)
+
+    ascii_string = "".join(line.tobytes().decode() for line in ascii_lines)
+
+    return ascii_string
 
 
 """
@@ -101,9 +112,8 @@ def wk1():
     for i in tqdm(range(1, 900)):
         try:
             with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-                img = img.getdata(0)
                 img = np.array(img)
-                w1.append(process(img))
+                w1.append(convert_image_to_ascii_string(img))
         except Exception as e:
             print(e)
 
@@ -111,25 +121,22 @@ def wk1():
 def wk2():
     for i in range(900, 1800):
         with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-            img = img.getdata(0)
             img = np.array(img)
-            w2.append(process(img))
+            w2.append(convert_image_to_ascii_string(img))
 
 
 def wk3():
     for i in range(1800, 2700):
         with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-            img = img.getdata(0)
             img = np.array(img)
-            w3.append(process(img))
+            w3.append(convert_image_to_ascii_string(img))
 
 
 def wk4():  # I know that wk4 has less files to work on but :|
     for i in range(2700, 3285):
         with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-            img = img.getdata(0)
             img = np.array(img)
-            w4.append(process(img))
+            w4.append(convert_image_to_ascii_string(img))
 
 
 # These are our workers. They are not starting yet
