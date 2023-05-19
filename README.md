@@ -42,11 +42,6 @@ Step 5: Something is seriously wrong. Contact the developer and I'll start worki
 
 Bonus: If the problem had something to do with the remote try running python3 cleaner.py
 ----------------------
-TODO:
-
-- Push to main
--Start working on 1.5 (Pause and resume update)
-- Try to hit 10 stars :cry:
 ## Contributing
 
 If you want to help this project then you can make a pull request for any idea or error you find in the code.
