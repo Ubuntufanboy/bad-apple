@@ -4,9 +4,8 @@
 (Really zoomed out gnome ternimal)
 
 
-## How does it work?
-
-This script will download the video and download each frame indivisually. Then it will make the image into a smaller size to fit the terminal window. Next main.py takes each frame and processes the image using Pillow. The pixels brightness is returned to process. Next, The code will look at the brightness and add a ASCII charector that represents the brightness. An example of high brightness is "@#&" and an example of low brightness is " .," representing black. All the frames are put into a list called text and then the we loop over the list printing each frame then sleeping for a 15th of a second making it look like 15 fps.
+### We now use AVP engine for video playback
+https://www.github.com/Ubuntufanboy/ascii-video-player
 
 --------------
 
