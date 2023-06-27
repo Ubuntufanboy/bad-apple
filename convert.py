@@ -4,7 +4,6 @@ from PIL import Image
 from pathlib import Path
 num = 1
 
-
 print("Checking... Do not resize the window!")
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
