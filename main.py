@@ -12,8 +12,6 @@ import os
 import time
 import pygame
 from threading import Thread
-from tqdm import tqdm
-from pathlib import Path
 from PIL import Image
 
 
@@ -72,78 +70,17 @@ reimu2 = Thread(target=listen_for_unpause)
 reimu3 = Thread(target=listen_for_disable)
 reimu4 = Thread(target=listen_for_move)
 
+def img2ascii(arr):
+    arr = np.array(arr, dtype=np.uint8)
+    # Create a lookup table for mapping brightness values to characters
+    lookup_table = np.empty(256, dtype=np.dtype('U1'))
+    lookup_table[:100] = " "
+    lookup_table[100:200] = "*"
+    lookup_table[200:] = "#"
+    # Map brightness values to characters using the lookup table
+    char_array = lookup_table[arr]
 
-# This function turns the data from Pillow, into ASCII to be printed out
-def brightness_to_ascii(img):
-    output = np.chararray(img.shape)
-    output[:] = ' '
-    output[img > 50] = '.'
-    output[img > 100] = '+'
-    output[img > 150] = '&'
-    output[img > 200] = '@'
-    return output
-
-
-def convert_image_to_ascii_string(img):
-    brightness = np.mean(img, axis=2)
-    ascii_lines = brightness_to_ascii(brightness)
-
-    ascii_string = "".join(line.tobytes().decode() for line in ascii_lines)
-
-    return ascii_string
-
-
-"""
-Think of the list ``frames`` as a master big container
-The w1, w2 etc are workers. They only have small pockets to keep things
-Once their pockets are full, they put the data in the big container
-"""
-
-frames = []
-
-w1 = []
-w2 = []
-w3 = []
-w4 = []
-
-
-# Worker 1 will only work on a small portion of the frames
-def wk1():
-    for i in tqdm(range(1, 900)):
-        try:
-            with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-                img = np.array(img)
-                w1.append(convert_image_to_ascii_string(img))
-        except Exception as e:
-            print(e)
-
-
-def wk2():
-    for i in range(900, 1800):
-        with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-            img = np.array(img)
-            w2.append(convert_image_to_ascii_string(img))
-
-
-def wk3():
-    for i in range(1800, 2700):
-        with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-            img = np.array(img)
-            w3.append(convert_image_to_ascii_string(img))
-
-
-def wk4():  # I know that wk4 has less files to work on but :|
-    for i in range(2700, 3285):
-        with Image.open(f"{current}/converted/{x}x{y}/new{i}.png") as img:
-            img = np.array(img)
-            w4.append(convert_image_to_ascii_string(img))
-
-
-# These are our workers. They are not starting yet
-f = Thread(target=wk1)
-u = Thread(target=wk2)
-c = Thread(target=wk3)
-k = Thread(target=wk4)
+    return char_array
 
 print("Are you using GNOME? y/n If you don't know enter y")  # To start remote
 # A new terminal window for the remote
@@ -154,154 +91,45 @@ else:
     opener = False
 
 print("Checking terminal size! Please do not change to terminal size")
-time.sleep(1)  # Gives user time to keep terminal size
+time.sleep(.5)  # Gives user time to keep terminal size
 
 # This gets terminal size because we need to know how big our image will be
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
 
-current = os.getcwd()  # we don't know where the program is installed
-p = Path(f"{current}/processed/{x}x{y}")  # This is where the 1.txt files are
-images = Path(f"{current}/converted/{x}x{y}")  # the images we converted
+global stopped
+stopped = False
+data = []
+for i in range(1, 3285):
+    with Image.open(f"converted/{x}x{y}/new{i}.png") as img:
+        data.append(img.getdata(0))
+frames = img2ascii(data)
 
-if images.exists() is False:
-    print("ERROR: Converted images not found")
-    exit(1)
-skip = False
-exists = False
+pygame.mixer.init()
+pygame.mixer.music.load("badapple.mp3")
+pygame.mixer.music.play()
 
-if p.exists():  # p is the pre-processed files
-    exists = True  # This is so we don't make a new folder
+if opener:
+    os.system("gnome-terminal --command ./remote.sh")
 
-    length = sum(1 for x in p.glob('*') if x.is_file())
-    if length >= 3284:
-        print("Found all pre-processed files!")
-        skip = True
-    else:
-        print(f"Expected 3285 files. Got {length}")
-        print("Too few files... Processing files again")
-else:
-    print("Processed directory does not exist")
-if not skip:
-    if not exists:
-        os.chdir("processed")
-        os.mkdir(f"{x}x{y}")
-        os.chdir("..")
-    
-    global stopped
-    stopped = False
-    
-    f.start()
-    u.start()
-    c.start()
-    k.start()
+reimu1.start()
+reimu2.start()
+reimu3.start()
+reimu4.start()
 
-    while len(w1) < 899 or len(w2) < 899 or len(w3) < 899 or len(w4) < 584:
-        if len(w1) == 100:
-            print("TIP: You can pause the video and music with the remote")
-            time.sleep(2)
-        if len(w1) == 250:
-            print("TIP: You can use the remote by typing python3 remote.py in this folder")
-            time.sleep(2)
-        if len(w1) == 400:
-            print("To support us you can share this program with others!")
-            time.sleep(2)
-        if len(w1) == 600:
-            print("Don't forget to star the repo!")
-            time.sleep(2)
-        if len(w1) == 800:
-            print("Almost done, thank you for waiting")
-            time.sleep(2)
-    frames = w1 + w2 + w3 + w4
+stopped = False
+frame = 0
 
-    # Time to write deez to disk
-    # This is so if we use this terminal size again, we don't need to wait
-    os.chdir("processed")
-    place = f"{x}x{y}"
-    os.chdir(place)
-    for i, frame in enumerate(frames):
-        os.system(f"touch {i}.txt")
-        with open(f"{i}.txt", 'w') as f:
-            f.write(frame)
-
-    # Get back to normal dir
-    os.chdir("..")
-    os.chdir("..")
-
-    next_call = time.perf_counter()
-
-    pygame.mixer.init()
-    pygame.mixer.music.load("badapple.mp3")
-    pygame.mixer.music.play()
-
-    if opener:
-        os.system("gnome-terminal --command ./remote.sh")
-
-    reimu1.start()
-    reimu2.start()
-    reimu3.start()
-    reimu4.start()
-
-    stopped = False
-    frame = 0
-
-    next_call = time.perf_counter()
-    now = False
-    while 1:
-        if stopped:
-            next_call = time.perf_counter() + 1/15
-            continue
-        if time.perf_counter() > next_call or (now is True):
-            if now:
-                now = False
-            next_call += 1/15
-            os.system("clear")
-            print(frames[frame])
-            frame += 1
-else:
-    # Get in directory
-    os.chdir("processed")
-    place = f"{x}x{y}"
-    os.chdir(place)
-
-    frames = []
-    for i in range(1, 3284):
-        with open(f"{i}.txt") as f:
-            frames.append(f.read())
-
-    #  get back to normal dir
-    os.chdir("..")
-    os.chdir("..")
-
-    if opener:
-        os.system("gnome-terminal --command ./remote.sh")
-
-    pygame.mixer.init()
-    pygame.mixer.music.load("badapple.mp3")
-    pygame.mixer.music.play()
-
-    reimu1.start()
-    reimu2.start()
-    reimu3.start()
-    reimu4.start()
-
-    stopped = False
-    now = False
-    frame = 0
-
-    next_call = time.perf_counter()
-    while 1:
-        if stopped:
-            next_call = time.perf_counter() + 1/15  # This means that
-            #  No matter how long it is paused, the video will print the next
-            #  frame a 15th of a second after the video is unpaused
-            continue
-        if time.perf_counter() > next_call or now:  # if frame requested now
-            #  We do this so we don't need to wait 1/15th of a second to show
-            #  The frame when we move the playhead
-            if now:
-                now = False  # to stop the video from hyper speed
-            next_call += 1/15  # Asign our next frame printing time
-            os.system("clear")
-            print(frames[frame])
-            frame += 1
+next_call = time.perf_counter()
+now = False
+while 1:
+    if stopped:
+        next_call = time.perf_counter() + 1/15
+        continue
+    if time.perf_counter() > next_call or (now is True):
+        if now:
+            now = False
+        next_call += 1/15
+        os.system("clear")
+        print(''.join(frames[frame]))
+        frame += 1
