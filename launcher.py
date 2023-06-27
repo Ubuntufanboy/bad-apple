@@ -1,4 +1,3 @@
-""" Pathlib is used to get info about paths"""
 from pathlib import Path
 import os
 
@@ -13,6 +12,7 @@ skip = False
 print("Verdict:" ,end="")
 
 if p.exists():
+    # get the number of files in img folder
     length = sum(1 for x in p.glob('*') if x.is_file())
     if length >= 3284:
         print("Already exists")
@@ -22,24 +22,11 @@ if p.exists():
         print("Too few files in directory")
 else:
     print("Directory does not exist")
-    try:
-        os.mkdir("img")
-    except Exception as e:
-        print("Could not create new directory!")
-        print(e)
+    os.mkdir("img")
     print("Directory made!")
-if skip is False:
+if skip is False: # If we already have the frames downloaded from the video
+    print("Extracting frames from Bad-Apple video!")
     os.system("python3 framer.py")
-
-filename = f"{current}/converted"
-n = Path(filename)
-if n.exists() is False:
-    os.mkdir("converted")
-
-filename = f"{current}/processed"
-n = Path(filename)
-if n.exists() is False:
-    os.mkdir("processed")
 
 os.system("python3 convert.py")
 os.system("python3 main.py")
