@@ -29,6 +29,7 @@ if p.exists():
         print("Too few files in directory")
 else:
     print("Directory does not exist")
+    os.system("mkdir converted")
 
 print("Done!")
 if skip is False:
