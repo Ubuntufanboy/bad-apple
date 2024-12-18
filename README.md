@@ -23,6 +23,14 @@ Next run, ``python3 launcher.py``
 
 You can also run ``python3 remote.py`` to control the video and audio (Pause and play and rewind etc)
 
+--------------------
+
+## Mac instructions ##
+HomeBrew package manager required  
+Run `./macinstall.sh`
+Run `python3 launcher.py`
+
+
 --------------
 
 # Help! Something isnt working!!
